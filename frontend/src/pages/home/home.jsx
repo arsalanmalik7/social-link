@@ -39,7 +39,7 @@ const Home = () => {
     async function retriveData() {
 
         try {
-            const response = await instance.get(`/posts`, {
+            const response = await instance.get(`/feed`, {
                 withCredentials: true
             })
             setAllPosts(response.data)

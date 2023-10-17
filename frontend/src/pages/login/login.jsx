@@ -58,8 +58,8 @@ const Login = () => {
                         <form onSubmit={loginSubmitHandler} className="flex flex-col gap-6 lg:w-96 sm:w-80">
                             <h1 className="text-center text-3xl font-bold text-cyan-500">Login</h1>
 
-                            <input className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="email" placeholder="Email" ref={emailInputRef} />
-                            <input className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="password" placeholder="Password" ref={passwordInputRef} />
+                            <input autoComplete="email" autoCorrect="on" className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="email" placeholder="Email" ref={emailInputRef} />
+                            <input autoComplete="current-password" className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="password" placeholder="Password" ref={passwordInputRef} />
                             <button type="submit" className="bg-cyan-500 p-4 rounded-full text-white font-bold hover:bg-cyan-700">Login</button>
                             <p className="text-center">Don't have an account? <a href="/signup" className="text-cyan-500 hover:text-cyan-700">Signup</a></p>
                         </form>
