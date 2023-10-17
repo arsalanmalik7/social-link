@@ -10,7 +10,7 @@ import { GlobalContext } from './context/context';
 import { baseUrl } from './core.mjs';
 import axios from 'axios';
 import './App.css';
-import { HouseFill, ChatFill, FilePersonFill } from 'react-bootstrap-icons';
+import { House, ChatDots, FilePerson } from 'react-bootstrap-icons';
 
 
 
@@ -117,14 +117,14 @@ const App = () => {
           <>
 
             <nav className=' flex justify-around bg-slate-100 p-4'>
-              <ul className='flex justify-center gap-52'>
-                <li className='  hover:bg-slate-600 text-stone-800 text-3xl'><Link className='  p-10' to={`/`}><HouseFill className=' text-blue-600' /></Link></li>
-                <li className='  hover:bg-slate-600 text-stone-800 text-3xl'><Link className='  p-10' to={`/chat`}><ChatFill /></Link></li>
-                <li className='  hover:bg-slate-600 text-stone-800 text-3xl'><Link className='  p-10' to={`about`}><FilePersonFill /></Link></li>
+              <ul className='flex items-center justify-center gap-52'>
+                <li className=' hover:bg-slate-300 text-stone-800 text-3xl active:text-blue-600'><Link className='  ' to={`/`}><House /></Link></li>
+                <li className=' hover:bg-slate-300 text-stone-800 text-3xl'><Link className=' ' to={`/chat`}><ChatDots /></Link></li>
+                <li className=' hover:bg-slate-300 text-stone-800 text-3xl'><Link className=' ' to={`about`}><FilePerson /></Link></li>
               </ul>
               <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>
             </nav>
-            
+
 
 
 
