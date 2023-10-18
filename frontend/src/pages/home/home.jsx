@@ -98,7 +98,6 @@ const Home = () => {
     }
 
 
-
     useEffect(() => {
         retriveData();
     }, []);
