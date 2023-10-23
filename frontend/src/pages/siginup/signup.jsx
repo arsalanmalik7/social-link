@@ -13,9 +13,10 @@ const Signup = () => {
     const repeatPasswordInputRef = useRef(null);
     const [result, setResult] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [hideBlur, setHideBlur] = useState(false);
 
 
-    const [passwordErrorClass, setPasswordErrorClass] = useState("hidden");
+    const [passwordErrorClass, setPasswordErrorClass] = useState("");
 
     const instance = axios.create({
         baseURL: `${baseUrl}/api`
@@ -30,10 +31,10 @@ const Signup = () => {
 
 
         if (passwordInputRef.current.value !== repeatPasswordInputRef.current.value) {
-            setPasswordErrorClass("");
+            setPasswordErrorClass('pssword not matched');
             return;
         } else {
-            setPasswordErrorClass("hidden");
+            setPasswordErrorClass("");
         }
 
         try {
@@ -46,11 +47,14 @@ const Signup = () => {
 
             console.log("resp: ", response.data.message);
             setResult(response.data.message);
+            setHideBlur(true);
+            console.log("result: ", result);
 
             setTimeout(() => {
                 setResult("");
+                setHideBlur(false);
 
-            }, 2000);
+            }, 3000);
 
         } catch (error) {
             console.log(error.response.data.message);
@@ -82,6 +86,18 @@ const Signup = () => {
                         </form>
                     </div>
                 </div>
+
+            </div>
+            {
+                hideBlur &&
+                <div className="flex justify-center absolute left-0 top-0 bg w-full h-full backdrop-blur-md">
+                <h1 className=" bg-slate-100 p-3 rounded text-center mt-5 self-center text-green-500 font-bold text-2xl" hidden={!result}>{result}</h1>
+            
+            </div>
+            }
+            <div>
+                <p className=" text-center mt-5 text-red-500 font-bold text-2xl" hidden={!passwordErrorClass}>{passwordErrorClass}</p>
+                <h3 className=" text-center mt-5 text-red-500 font-bold text-2xl" hidden={!errorMsg}>{errorMsg}</h3>
             </div>
         </>
     )
