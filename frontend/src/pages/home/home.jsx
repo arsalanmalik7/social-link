@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { baseUrl } from '../../core.mjs';
 import axios from 'axios';
 import Post from '../../components/posts/post';
 
 
 const Home = () => {
-    const [title, setTitle] = useState("");
-    const [text, setText] = useState("");
+    const titleInputRef = useRef(null);
+    const textInputRef = useRef(null);
     const [allPosts, setAllPosts] = useState([]);
     const searchInputRef = useRef(null);
 
@@ -35,31 +35,25 @@ const Home = () => {
 
 
 
-
-    async function retriveData() {
-
+    const retriveData = useCallback(async () => {
         try {
             const response = await instance.get(`/feed`, {
                 withCredentials: true
-            })
-            setAllPosts(response.data)
+            });
+            setAllPosts(response.data);
+            console.log(response.data);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
-
+    }, [setAllPosts]);
+    
     const createPost = async (e) => {
         e.preventDefault();
 
 
-        const newTitle = e.target[0].value;
-        const newText = e.target[1].value;
+        const newTitle = titleInputRef.current.value;
+        const newText = textInputRef.current.value;
 
-        setTitle(newTitle)
-        setText(newText)
-
-
-        e.target.reset();
 
         const response = await instance.post(`/post`, {
             title: newTitle,
@@ -73,6 +67,8 @@ const Home = () => {
 
         try {
             retriveData();
+            console.log(response.data)
+            e.target.reset();
         } catch (error) {
             console.log(error.data)
         }
@@ -100,15 +96,19 @@ const Home = () => {
 
     useEffect(() => {
         retriveData();
-    }, []);
+    }, [retriveData]);
 
 
     return (
         <>
-            <form>
-                <input type="text" placeholder="Title" />
-                <textarea id="text" placeholder="Text" cols="30" rows="10"></textarea>
-                <button type="submit" onClick={createPost}>Create Post</button>
+            <form onSubmit={searchHandler}>
+                <input type="text" className=' bg-gray-200 border border-black' ref={searchInputRef} placeholder="Search" required={true} />
+                <button type='submit' className=' bg-gray-200 border border-black'>Search</button>
+            </form>
+            <form onSubmit={createPost}>
+                <input type="text" className=' bg-gray-200 border border-black' ref={titleInputRef} placeholder="Title" required={true} />
+                <textarea id="text" className=' bg-gray-200 border border-black' ref={textInputRef} placeholder="Text" cols="30" rows="10" required={true}></textarea>
+                <button type='submit' className=' bg-gray-200 border border-black'>Create Post</button>
 
             </form>
 

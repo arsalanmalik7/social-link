@@ -1,10 +1,14 @@
 import { useState, useRef } from "react";
 import axios from "axios";
 import { baseUrl } from "../../core.mjs";
+import Modal from 'react-bootstrap/Modal';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/button';
 
 const Post = ({ eachPost, onDelete, onUpdate }) => {
 
-  
+
 
 
 
@@ -12,7 +16,17 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
         baseURL: `${baseUrl}/api`
     })
 
-  
+
+    const [editeShow, setEditShow] = useState(false);
+
+    const editeHandleClose = () => setEditShow(false);
+    const editHandleShow = () => setEditShow(true);
+
+
+
+    const [deleteShow, deleteSetShow] = useState(false);
+    const deleteHandleClose = () => deleteSetShow(false);
+    const deleteHandleShow = () => deleteSetShow(true);
     const [deletePost, setDeletePost] = useState(true);
 
     const [prevTitle, setPrevTitle] = useState("");
@@ -23,14 +37,14 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
     const handleDeleteClick = () => {
         postIdRef.current = eachPost._id;
 
-        
+        deleteHandleShow()
 
     }
 
     const handleSaveClick = async () => {
         const postId = postIdRef.current;
 
-        const response = await instance.delete(`/post/${postId}`)
+        const response = await instance.delete(`/post/${postId}`,{withCredentials: true})
         try {
             setDeletePost(response.data);
             onDelete(postId);
@@ -38,7 +52,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
             console.log(error.data)
         }
 
-        
+        deleteHandleClose()
     }
 
     const handleEditClick = async (e) => {
@@ -46,7 +60,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
         setPrevTitle(eachPost.title);
         setPrevText(eachPost.text);
 
-        
+        editHandleShow();
 
     }
 
@@ -57,8 +71,8 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
         try {
             const response = await instance.put(`/post/${postId}`, {
                 title: prevTitle,
-                text: prevText
-            })
+                text: prevText,
+            },{withCredentials: true})
 
             console.log(response.data);
 
@@ -71,12 +85,13 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
 
             onUpdate(updatedPost);
 
-           
+            editeHandleClose();
         } catch (error) {
             console.log(error.data)
 
         }
     }
+
 
 
     return (
@@ -85,10 +100,79 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
             <div className="post">
                 <h3>{eachPost.title}</h3>
                 <p>{eachPost.text}</p>
-                <button onClick={handleEditClick}>Edit</button>
-                <button onClick={handleDeleteClick}>Delete</button>
+                <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>
+                <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleDeleteClick}>Delete</button>
             </div>
-            
+
+            <Modal show={deleteShow} onHide={deleteHandleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Delete Post Permenently?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={deleteHandleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveClick}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {deletePost && (
+
+                <Modal
+                    size="lg"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                >
+                    <Modal.Header closeButton>
+
+                    </Modal.Header>
+                    <Modal.Body>
+
+                        <h1>
+                            {deletePost}
+                        </h1>
+                    </Modal.Body>
+
+                </Modal>)}
+
+            <Modal show={editeShow} onHide={editeHandleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Title of Post</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={prevTitle}
+                                onChange={(e) => setPrevTitle(e.target.value)}
+                                autoFocus
+                            />
+                        </Form.Group>
+                        <Form.Group
+                            className="mb-3"
+                            controlId="exampleForm.ControlTextarea1"
+                        >
+                            <Form.Label>text of Post</Form.Label>
+                            <Form.Control as="textarea" rows={3} value={prevText} onChange={(e) => setPrevText(e.target.value)} />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={editeHandleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={updateClick}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal >
+
+
         </>
     )
 }

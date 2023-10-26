@@ -99,7 +99,8 @@ router.post('/login', async (req, res, next) => {
                     isAdmin: false,
                     firstName: result.firstName,
                     lastName: result.lastName,
-                    email: req.body.email
+                    email: req.body.email,
+                    _id: result._id
                 }, process.env.SECRET, {
                     expiresIn: '24h'
                 })
@@ -118,7 +119,8 @@ router.post('/login', async (req, res, next) => {
                         isAdmin: result.isAdmin,
                         firstName: result.firstName,
                         lastName: result.lastName,
-                        email: req.body.email
+                        email: req.body.email,
+                        _id: result._id
                     }
                 });
                 return;

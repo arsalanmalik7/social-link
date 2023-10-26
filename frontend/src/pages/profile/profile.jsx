@@ -4,7 +4,7 @@ import { GlobalContext } from "../../context/context";
 
 const Profile = () => {
 
-    const { state, dispatch } = useContext(GlobalContext);
+    const { state } = useContext(GlobalContext);
 
 
 

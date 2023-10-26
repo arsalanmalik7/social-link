@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useState, useRef, useContext } from "react";
 import axios from "axios";
 import { baseUrl } from "../../core";
 import { GlobalContext } from "../../context/context";
@@ -46,6 +46,7 @@ const Login = () => {
             setErrorMsg(error.response?.data?.message)
         }
 
+        console.log(state)
     }
 
 
@@ -58,7 +59,7 @@ const Login = () => {
                         <form onSubmit={loginSubmitHandler} className="flex flex-col gap-6 lg:w-96 sm:w-80">
                             <h1 className="text-center text-3xl font-bold text-cyan-500">Login</h1>
 
-                            <input required autoComplete="email" autoCorrect="on" className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="email" placeholder="Email" ref={emailInputRef} />
+                            <input className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="email" placeholder="Email" required autoComplete="email" ref={emailInputRef} />
                             <input required autoComplete="current-password" className=" bg-neutral-200 p-3 focus:bg-neutral-300 rounded-md" type="password" placeholder="Password" ref={passwordInputRef} />
                             <button type="submit" className="bg-cyan-500 p-4 rounded-full text-white font-bold hover:bg-cyan-700">Login</button>
                             <p className="text-center">Don't have an account? <a href="/signup" className="text-cyan-500 hover:text-cyan-700">Signup</a></p>

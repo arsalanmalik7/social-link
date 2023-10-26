@@ -19,7 +19,18 @@ import Profile from './pages/profile/profile';
 
 const App = () => {
 
-
+  useEffect(() => {
+    axios.interceptors.request.use(
+      function (config) {
+        config.withCredentials = true;
+        return config;
+      },
+      function (error) {
+        // Do something with request error
+        return Promise.reject(error);
+      }
+    );
+  }, []);
 
   const instance = axios.create({
     baseURL: `${baseUrl}/api`,
@@ -41,8 +52,6 @@ const App = () => {
   }, [location])
 
 
-
-  console.log(activeLink);
 
 
   const { state, dispatch } = useContext(GlobalContext);
@@ -139,9 +148,9 @@ const App = () => {
             <nav className=' flex items-center justify-between bg-slate-100 p-4'>
               <div className=' text-2xl font-bold '>Welcome {state?.user?.firstName} {state?.user?.lastName}</div>
               <ul className='flex items-center justify-center gap-40'>
-                <Link className={`${activeLink === '/' ? ' border-b-8 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/`}><House /></Link>
-                <Link className={`${activeLink === '/chat' ? 'border-b-8 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/chat`}><ChatDots /></Link>
-                <Link className={`${activeLink === '/profile' ? 'border-b-8 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/profile`}><FilePerson /></Link>
+                <Link className={`${activeLink === '/' ? ' border-b-2 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/`}><House /></Link>
+                <Link className={`${activeLink === '/chat' ? 'border-b-2 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/chat`}><ChatDots /></Link>
+                <Link className={`${activeLink === '/profile' ? 'border-b-2 border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3 rounded`} to={`/profile`}><FilePerson /></Link>
 
               </ul>
               <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>

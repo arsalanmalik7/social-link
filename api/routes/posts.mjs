@@ -89,7 +89,7 @@ router.post('/post', async (req, res, next) => {
         title: req.body.title,
         text: req.body.text,
         authorEmail: req.body.decoded.email,
-        authorId: req.body.decoded.id,
+        authorId: req.body.decoded._id,
         createdOn: new Date()
     })
     console.log("insertResponse: ", insertResponse)
@@ -107,15 +107,18 @@ router.get('/feed', async (req, res, next) => {
         {
             $lookup: {
                 from: "usersCollection",
-                localField: "text title createdaon authorId",
-                foreignField: "firstName lastName email ",
-                as: "authorObject"
+                localField: 'authorId',
+                foreignField: '_id',
+                as: 'authorObject'
 
             },
         },
 
         {
-            $unwind: "$authorObject"
+            $unwind: {
+                path: "$authorObject",
+                preserveNullAndEmptyArrays: true
+            }
 
         },
         {
@@ -125,19 +128,37 @@ router.get('/feed', async (req, res, next) => {
                 text: 1,
                 createdOn: 1,
                 _id: 1,
+                likes: { $ifNull: ["$likes", []] },
                 authorObject: {
-                    firstName: 1,
-                    lastName: 1,
-                    email: 1
+                    firstName: '$authorObject.firstName',
+                    lastName: '$authorObject.lastName',
+                    email: '$authorObject.email',
                 }
-            }
+
+            },
+
+        },
+        {
+            $skip: 0
+        },
+        {
+            $limit: 100
+        },
+        {
+            $sort: { _id: -1 }
         }
-
-
     ])
-    let results = await cursor.toArray();
-    console.log(results);
-    res.send(results);
+    try {
+        let results = await cursor.toArray();
+        console.log(results);
+        res.send(results);
+
+    } catch (error) {
+
+        console.log("error getting data mongodb: ", error);
+        res.status(500).send('server error, please try later');
+
+    }
 
 })
 
