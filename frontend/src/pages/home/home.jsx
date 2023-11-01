@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { baseUrl } from '../../core.mjs';
 import axios from 'axios';
 import Post from '../../components/posts/post';
+import { PersonCircle, XLg } from 'react-bootstrap-icons';
 
 
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
     const textInputRef = useRef(null);
     const [allPosts, setAllPosts] = useState([]);
     const searchInputRef = useRef(null);
+    const [showForm, setShowForm] = useState(false)
 
 
     const handleDeletePost = (postId) => {
@@ -46,7 +48,7 @@ const Home = () => {
             console.log(error);
         }
     }, [setAllPosts]);
-    
+
     const createPost = async (e) => {
         e.preventDefault();
 
@@ -98,19 +100,34 @@ const Home = () => {
         retriveData();
     }, [retriveData]);
 
+    const showPostForm = () => {
+
+        setShowForm(!showForm)
+    }
+
 
     return (
         <>
-            <form onSubmit={searchHandler}>
+
+            <form onSubmit={searchHandler} className=' lg:mt-24'>
                 <input type="text" className=' bg-gray-200 border border-black' ref={searchInputRef} placeholder="Search" required={true} />
                 <button type='submit' className=' bg-gray-200 border border-black'>Search</button>
             </form>
-            <form onSubmit={createPost}>
-                <input type="text" className=' bg-gray-200 border border-black' ref={titleInputRef} placeholder="Title" required={true} />
-                <textarea id="text" className=' bg-gray-200 border border-black' ref={textInputRef} placeholder="Text" cols="30" rows="10" required={true}></textarea>
-                <button type='submit' className=' bg-gray-200 border border-black'>Create Post</button>
 
-            </form>
+            <div className='bg-slate-300 p-4 flex items-center gap-2 w-5/12 mt-3 m-auto rounded'>
+                <h3><PersonCircle /></h3>
+                <button onClick={showPostForm} className=' bg-neutral-200 p-2 rounded-full flex-grow hover:bg-neutral-300'>Whats on your mind, Arsalan?</button>
+            </div>
+            <div className={`${showForm ? 'block' : 'hidden'} absolute  w-full h-full top-0 backdrop-blur-sm flex justify-center items-center`}>
+                <form onSubmit={createPost} className='bg-slate-50 p-5 rounded  '>
+                    <XLg onClick={showPostForm} size={40} color='black'
+                        style={{ cursor: 'pointer' }}
+                        className='ml-auto' />
+                    <h2 className='text-center border-b-2 border-b-black'>Create Post</h2>
+
+                    <textarea id="text" className=' text-2xl p-2' ref={textInputRef} placeholder="Whats on your mind, Arsalan?" cols="30" rows="10" required={true}></textarea>
+                </form>
+            </div>
 
 
 

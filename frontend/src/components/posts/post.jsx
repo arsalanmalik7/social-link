@@ -97,7 +97,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
     return (
         <>
 
-            <div className="post">
+            <div className="post mb-16">
                 <h3>{eachPost.title}</h3>
                 <p>{eachPost.text}</p>
                 <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>

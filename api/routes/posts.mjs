@@ -89,7 +89,7 @@ router.post('/post', async (req, res, next) => {
         title: req.body.title,
         text: req.body.text,
         authorEmail: req.body.decoded.email,
-        authorId: req.body.decoded._id,
+        authorId: new ObjectId(req.body.decoded._id),
         createdOn: new Date()
     })
     console.log("insertResponse: ", insertResponse)
@@ -103,14 +103,14 @@ router.get('/feed', async (req, res, next) => {
 
 
 
+
     const cursor = col.aggregate([
         {
             $lookup: {
                 from: "usersCollection",
                 localField: 'authorId',
                 foreignField: '_id',
-                as: 'authorObject'
-
+                as: 'authorObject',
             },
         },
 
@@ -124,30 +124,31 @@ router.get('/feed', async (req, res, next) => {
         {
 
             $project: {
+                _id: 1,
                 title: 1,
                 text: 1,
                 createdOn: 1,
-                _id: 1,
                 likes: { $ifNull: ["$likes", []] },
                 authorObject: {
-                    firstName: '$authorObject.firstName',
-                    lastName: '$authorObject.lastName',
-                    email: '$authorObject.email',
-                }
-
+                    firstName: { $ifNull: ['$authorObject.firstName', null] },
+                    lastName: { $ifNull: ['$authorObject.lastName', null] },
+                    email: { $ifNull: ['$authorObject.email', null] },
+                },
             },
 
         },
-        {
-            $skip: 0
-        },
-        {
-            $limit: 100
-        },
-        {
-            $sort: { _id: -1 }
-        }
+        // {
+        //     $sort: { _id: -1 }
+        // },
+        // {
+        //     $skip: 0
+        // },
+        // {
+        //     $limit: 100
+        // },
+
     ])
+
     try {
         let results = await cursor.toArray();
         console.log(results);
