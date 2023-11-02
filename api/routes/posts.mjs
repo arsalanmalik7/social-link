@@ -133,19 +133,20 @@ router.get('/feed', async (req, res, next) => {
                     firstName: { $ifNull: ['$authorObject.firstName', null] },
                     lastName: { $ifNull: ['$authorObject.lastName', null] },
                     email: { $ifNull: ['$authorObject.email', null] },
+                    createdOn: { $ifNull: ['$authorObject.createdOn', null] }
                 },
             },
 
         },
-        // {
-        //     $sort: { _id: -1 }
-        // },
-        // {
-        //     $skip: 0
-        // },
-        // {
-        //     $limit: 100
-        // },
+        {
+            $sort: { _id: -1 }
+        },
+        {
+            $skip: 0
+        },
+        {
+            $limit: 100
+        },
 
     ])
 

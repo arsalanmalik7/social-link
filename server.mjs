@@ -34,6 +34,7 @@ app.use(`/api`, (req, res, next) => {
 
 
         req.body.decoded = {
+            _id:decoded._id,
             firstName: decoded.firstName,
             lastName: decoded.lastName,
             email: decoded.email,

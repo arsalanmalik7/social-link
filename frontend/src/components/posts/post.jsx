@@ -5,6 +5,10 @@ import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/button';
+import { PersonCircle } from "react-bootstrap-icons";
+import moment from 'moment';
+
+
 
 const Post = ({ eachPost, onDelete, onUpdate }) => {
 
@@ -44,7 +48,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
     const handleSaveClick = async () => {
         const postId = postIdRef.current;
 
-        const response = await instance.delete(`/post/${postId}`,{withCredentials: true})
+        const response = await instance.delete(`/post/${postId}`, { withCredentials: true })
         try {
             setDeletePost(response.data);
             onDelete(postId);
@@ -72,7 +76,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
             const response = await instance.put(`/post/${postId}`, {
                 title: prevTitle,
                 text: prevText,
-            },{withCredentials: true})
+            }, { withCredentials: true })
 
             console.log(response.data);
 
@@ -97,11 +101,20 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
     return (
         <>
 
-            <div className="post mb-16">
-                <h3>{eachPost.title}</h3>
-                <p>{eachPost.text}</p>
-                <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>
-                <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleDeleteClick}>Delete</button>
+            <div className="post mb-16 flex justify-center border-2 border-black">
+                <div className="p-3 border-2 border-gray-600">
+                    <div className="flex  items-center gap-3 border-1 border-black">
+                        <p className=" text-3xl"><PersonCircle /></p>
+                        <div className="">
+                            <p className=" text-2xl p-0">{eachPost.authorObject.firstName} {eachPost.authorObject.lastName}</p>
+                            <p>{moment(eachPost.authorObject.createdOn).format("MM Do YY")}</p>
+                        </div>
+                    </div>
+                    <h3>{eachPost.title}</h3>
+                    <p>{eachPost.text}</p>
+                    <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>
+                    <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleDeleteClick}>Delete</button>
+                </div>
             </div>
 
             <Modal show={deleteShow} onHide={deleteHandleClose}>

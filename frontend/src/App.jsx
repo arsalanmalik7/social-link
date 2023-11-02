@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import Home from './pages/home/home';
 import About from './pages/about/about';
@@ -18,6 +18,9 @@ import Profile from './pages/profile/profile';
 
 
 const App = () => {
+
+  const searchInputRef = useRef(null);
+
 
   useEffect(() => {
     axios.interceptors.request.use(
@@ -104,6 +107,22 @@ const App = () => {
 
   }
 
+  const searchHandler = async (e) => {
+    e.preventDefault()
+    try {
+
+      const response = await instance.get(`/search?q=${searchInputRef.current.value}`, {
+        withCredentials: true
+      });
+      console.log(response.data);
+
+
+    } catch (error) {
+      console.log(error.data);
+
+    }
+  }
+
   return (
     <>
 
@@ -146,8 +165,14 @@ const App = () => {
           <>
 
             <nav className=' fixed w-full flex items-center justify-between bg-slate-100 p-4 mb-32 top-0 '>
-              <div className=' sm:text-2xl text-3xl font-bold '>social<span className=' bg-blue-500 text-white sm:text-xl text-2xl px-3 py-1'>LINK</span></div>
+              <div className=' flex items-center gap-3'>
+                <div className=' sm:text-2xl text-3xl font-bold '>social<span className=' bg-blue-500 text-white sm:text-xl text-2xl px-3 py-1'>LINK</span></div>
+                <form onSubmit={searchHandler} className=''>
+                  <input type="text" className=' bg-gray-200 border border-black' ref={searchInputRef} placeholder="Search" required={true} />
+                </form>
+              </div>
               <ul className='sm:fixed sm:bottom-0 sm:left-0 sm:m-0 sm:bg-slate-300 sm:w-full flex items-center justify-center sm:gap-20 gap-40'>
+
                 <Link className={`${activeLink === '/' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/`}><House /></Link>
                 <Link className={`${activeLink === '/chat' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/chat`}><ChatDots /></Link>
                 <Link className={`${activeLink === '/profile' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/profile`}><FilePerson /></Link>
