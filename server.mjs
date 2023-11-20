@@ -16,7 +16,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
     {
-        origin: ['http://localhost:3000'],
+        origin: [
+            'http://localhost:3000',
+            'http://192.168.1.107:3000'
+
+        ],
         credentials: true,
         methods: "GET,POST,PUT,DELETE",
     }
@@ -34,7 +38,7 @@ app.use(`/api`, (req, res, next) => {
 
 
         req.body.decoded = {
-            _id:decoded._id,
+            _id: decoded._id,
             firstName: decoded.firstName,
             lastName: decoded.lastName,
             email: decoded.email,
@@ -57,9 +61,9 @@ app.use(`/api`, (req, res, next) => {
 app.use('/api', postRouter);
 
 
-app.use(``, express.static(path.join(__dirname, './frontend/build')))
+app.use(`/`, express.static(path.join(__dirname, '/frontend/build')))
 app.get(`*`, (req, res) => {
-    res.sendFile(path.join(__dirname, './frontend/build/'))
+    res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
 })
 
 

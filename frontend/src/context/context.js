@@ -1,6 +1,5 @@
 import React, { createContext, useReducer } from 'react'
 import { reducer } from './reducer';
-export const GlobalContext = createContext("Initial Value");
 
 
 let data = {
@@ -9,6 +8,7 @@ let data = {
     isLogin: null,
     darkTheme: true
 }
+export const GlobalContext = createContext(data);
 
 
 export default function ContextProvider({ children }) {

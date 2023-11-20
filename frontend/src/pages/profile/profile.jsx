@@ -6,10 +6,12 @@ const Profile = () => {
 
     const { state } = useContext(GlobalContext);
 
+    console.log(state);
 
 
     return (
         <>
+        <div className=" mt-16">
             <div>
                 <h1>Profile</h1>
             </div>
@@ -17,6 +19,7 @@ const Profile = () => {
                 <h1>{state.user.firstName} {state.user.lastName}</h1>
                 <p>{state.user.email}</p>
             </div>
+        </div>
         </>
     )
 };

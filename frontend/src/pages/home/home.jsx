@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { baseUrl } from '../../core.mjs';
 import axios from 'axios';
 import Post from '../../components/posts/post';
 import { PersonCircle, XLg } from 'react-bootstrap-icons';
+import GlobalContext from "../../context/context";
 
 
 const Home = () => {
@@ -83,6 +84,7 @@ const Home = () => {
 
     useEffect(() => {
         retriveData();
+
     }, [retriveData]);
 
     const showPostForm = () => {

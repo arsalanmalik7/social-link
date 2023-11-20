@@ -7,13 +7,16 @@ export const reducer = (state, action) => {
             if (action.payload?.firstName
                 && action.payload?.lastName
                 && action.payload?.email
+                && action.payload?._id
+            
             ) {
 
                 const role = (action.payload?.isAdmin) ? "admin" : "user";
                 const user = {
                     firstName: action.payload?.firstName,
                     lastName: action.payload?.lastName,
-                    email: action.payload?.email
+                    email: action.payload?.email,
+                    _id: action.payload?._id
                 }
 
                 return { ...state, isLogin: true, role: role, user: user }

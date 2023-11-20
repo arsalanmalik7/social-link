@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import axios from "axios";
 import { baseUrl } from "../../core.mjs";
 import Modal from 'react-bootstrap/Modal';
@@ -8,18 +8,18 @@ import Button from 'react-bootstrap/button';
 import { PersonCircle } from "react-bootstrap-icons";
 import moment from 'moment';
 
+import { GlobalContext } from "../../context/context";
+
 
 
 const Post = ({ eachPost, onDelete, onUpdate }) => {
-
-
-
 
 
     const instance = axios.create({
         baseURL: `${baseUrl}/api`
     })
 
+    const { state } = useContext(GlobalContext);
 
     const [editeShow, setEditShow] = useState(false);
 
@@ -97,23 +97,29 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
     }
 
 
-
     return (
         <>
 
-            <div className="post mb-16 flex justify-center border-2 border-black">
-                <div className="p-3 border-2 border-gray-600">
-                    <div className="flex  items-center gap-3 border-1 border-black">
+            <div className="post mb-16 flex justify-center border-2 border-black mt-4">
+                <div className="p-3 border-2 border-gray-600 bg-neutral-400 w-96">
+                    <div className="flex  items-center gap-3 border-1 border-black ">
                         <p className=" text-3xl"><PersonCircle /></p>
                         <div className="">
-                            <p className=" text-2xl p-0">{eachPost.authorObject.firstName} {eachPost.authorObject.lastName}</p>
-                            <p>{moment(eachPost.authorObject.createdOn).format("MM Do YY")}</p>
+                            <span className=" text-xl p-0">{eachPost.authorObject.firstName} {eachPost.authorObject.lastName}</span><br />
+                            <span>{moment(eachPost.authorObject.createdOn).format("MM Do YY")}</span>
                         </div>
                     </div>
                     <h3>{eachPost.title}</h3>
                     <p>{eachPost.text}</p>
-                    <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>
-                    <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleDeleteClick}>Delete</button>
+                    {eachPost.authorObject._id === state.user._id ?
+                        <div>
+                            <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleEditClick}>Edit</button>
+                            <button className="bg-blue-300 p-3 m-3 rounded " onClick={handleDeleteClick}>Delete</button>
+                        </div>
+                        :
+                        null
+                    }
+
                 </div>
             </div>
 

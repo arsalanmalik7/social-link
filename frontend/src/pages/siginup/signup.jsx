@@ -43,6 +43,9 @@ const Signup = () => {
                 lastName: lastNameInputRef.current.value,
                 email: emailInputRef.current.value,
                 password: passwordInputRef.current.value,
+            },
+            {
+                withCredentials: true
             });
 
             console.log("resp: ", response.data.message);
@@ -57,11 +60,13 @@ const Signup = () => {
             }, 3000);
 
         } catch (error) {
-            console.log(error.response.data.message);
-            setErrorMsg(error.response.data.message);
 
+            console.log(error?.response?.data?.message);
+            setErrorMsg(error?.response?.data?.message);
 
         }
+
+
     }
 
     return (
@@ -91,9 +96,9 @@ const Signup = () => {
             {
                 hideBlur &&
                 <div className="flex justify-center absolute left-0 top-0 bg w-full h-full backdrop-blur-md">
-                <h1 className=" bg-slate-100 p-3 rounded text-center mt-5 self-center text-green-500 font-bold text-2xl" hidden={!result}>{result}</h1>
-            
-            </div>
+                    <h1 className=" bg-slate-100 p-3 rounded text-center mt-5 self-center text-green-500 font-bold text-2xl" hidden={!result}>{result}</h1>
+
+                </div>
             }
             <div>
                 <p className=" text-center mt-5 text-red-500 font-bold text-2xl" hidden={!passwordErrorClass}>{passwordErrorClass}</p>
@@ -103,5 +108,6 @@ const Signup = () => {
     )
 
 }
+
 
 export default Signup;

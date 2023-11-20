@@ -5,7 +5,6 @@ import About from './pages/about/about';
 import Chat from './pages/chat/chat';
 import Login from './pages/login/login';
 import Signup from './pages/siginup/signup';
-import Prfile from './pages/profile/profile';
 import { GlobalContext } from './context/context';
 import { baseUrl } from './core.mjs';
 import axios from 'axios';

@@ -133,7 +133,8 @@ router.get('/feed', async (req, res, next) => {
                     firstName: { $ifNull: ['$authorObject.firstName', null] },
                     lastName: { $ifNull: ['$authorObject.lastName', null] },
                     email: { $ifNull: ['$authorObject.email', null] },
-                    createdOn: { $ifNull: ['$authorObject.createdOn', null] }
+                    createdOn: { $ifNull: ['$authorObject.createdOn', null] },
+                    _id: { $ifNull: ['$authorObject._id', null] }
                 },
             },
 
@@ -209,6 +210,7 @@ router.get(`/profile`, async (req, res, next) => {
                 firstName: result.firstName,
                 lastName: result.lastName,
                 email: result.email,
+                _id: result._id
             }
         })
     } catch (error) {
