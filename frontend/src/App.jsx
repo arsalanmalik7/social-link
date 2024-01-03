@@ -1,16 +1,24 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation, useParams } from "react-router-dom";
 import Home from './pages/home/home';
-import About from './pages/about/about';
-import Chat from './pages/chat/chat';
+import ChatUsers from './pages/chat/chatUsers';
+import ChatScreen from './pages/chat/chatScreen';
 import Login from './pages/login/login';
+import Notifications from './pages/notifications/notfication';
 import Signup from './pages/siginup/signup';
+import ForgetPassword from './pages/forgetPassword/forgetPassword';
+import ForgetPasswordComplete from './pages/forgetPasswordComplete/forgetPassComplete';
+import PostDetails from './pages/post-details/postDetails';
 import { GlobalContext } from './context/context';
 import { baseUrl } from './core.mjs';
 import axios from 'axios';
 import './App.css';
-import { House, ChatDots, FilePerson } from 'react-bootstrap-icons';
+import { HouseFill, ChatDotsFill, PersonFill, Search, BellFill } from 'react-bootstrap-icons';
+import { Modal, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { io } from 'socket.io-client';
 import Profile from './pages/profile/profile';
+import slLogo from './assets/SL-logo.png';
 
 
 
@@ -20,32 +28,78 @@ const App = () => {
 
   const searchInputRef = useRef(null);
 
+  const { userId } = useParams();
+  const location = useLocation();
 
-  useEffect(() => {
-    axios.interceptors.request.use(
-      function (config) {
-        config.withCredentials = true;
-        return config;
-      },
-      function (error) {
-        // Do something with request error
-        return Promise.reject(error);
-      }
-    );
-  }, []);
+  const [notifications, setNotifications] = useState([]);
 
   const instance = axios.create({
     baseURL: `${baseUrl}/api`,
 
   });
 
-  const [activeLink, setActiveLink] = useState('');
+  useEffect(() => {
+    instance.interceptors.request.use(
+      function (config) {
+        config.withCredentials = true;
+        return config;
+      },
+      function (error) {
+        console.error('Axios request error:', error);
+        return Promise.reject(error);
+      }
+    );
+  }, []);
 
-  const location = useLocation();
+
+  useEffect(() => {
+    const socket = io(baseUrl, {
+      withCredentials: true,
+      // secure: true
+    });
+
+    socket.on('connect', () => {
+      console.log('Socket connected on app folder:', socket.id);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected on app folder:', socket.id);
+
+    });
+
+    socket.on('NOTIFICATIONS', (e) => {
+      console.log('event: ', e);
+
+      setNotifications((prev) => {
+        return [e, ...prev];
+
+      });
+
+      const clearNotificationsOneByOne = () => {
+        if (!notifications.length > 0) {
+          setNotifications((prevNotifications) => prevNotifications.slice(1));
+        } else {
+          console.log('No more notifications to clear.');
+        }
+      };
+
+      setTimeout(clearNotificationsOneByOne, 8000);
+
+    });
+
+
+    return () => {
+      socket.close();
+    }
+
+  }, [])
+
+
+  const [activeLink, setActiveLink] = useState('');
 
   useEffect(() => {
     setActiveLink(location.pathname);
-    console.log(location.pathname);
+    // console.log(location.pathname);
 
     return () => {
       setActiveLink(location.pathname);
@@ -68,14 +122,13 @@ const App = () => {
           withCredentials: true,
         })
 
-        console.log(response.data);
+        // console.log(response.data);
 
         dispatch({
           type: "USER_LOGIN",
           payload: response.data.data
         })
 
-        console.log(state);
       } catch (error) {
         console.log(error);
         dispatch({ type: "USER_LOGOUT" })
@@ -84,7 +137,7 @@ const App = () => {
 
     }
 
-    console.log(state);
+    // console.log(state);
 
     loginStatus();
 
@@ -122,6 +175,25 @@ const App = () => {
     }
   }
 
+
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 150);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+
+
+
+
   return (
     <>
 
@@ -145,7 +217,7 @@ const App = () => {
 
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="chat" element={<Chat />} />
+              <Route path="chat" element={<ChatUsers />} />
               <Route path="profile" element={<Profile />} />
 
               <Route path="*" element={<Navigate to="/" replace={true} />} />
@@ -162,31 +234,74 @@ const App = () => {
 
         (
           <>
+            <div>
 
-            <nav className=' fixed w-full flex items-center justify-between bg-slate-100 p-4 mb-32 top-0 '>
-              <div className=' flex items-center gap-3'>
-                <div className=' sm:text-2xl text-3xl font-bold '>social<span className=' bg-blue-500 text-white sm:text-xl text-2xl px-3 py-1'>LINK</span></div>
-                <form onSubmit={searchHandler} className=''>
-                  <input type="text" className=' bg-gray-200 border border-black' ref={searchInputRef} placeholder="Search" required={true} />
-                </form>
+              {
+                notifications?.length > 0 &&
+                <div
+                  className="modal show absolute top-0 "
+                  style={{ display: 'block' }}
+                >
+                  {notifications?.map((item, index) => (
+                    <Modal.Dialog key={index} className='bg-transparent'>
+                      <Modal.Header className=' bg-opacity-50'>
+                        <Modal.Title>Notification</Modal.Title>
+                      </Modal.Header>
+
+                      <Modal.Body className=' bg-opacity-50'>
+                        <p>{item}</p>
+                      </Modal.Body>
+
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setNotifications(
+                          (prev) => prev.filter((item, idx) => idx !== index)
+
+                        )}>
+                          Close
+                        </Button>
+
+                      </Modal.Footer>
+
+                    </Modal.Dialog>
+
+
+                  ))}
+                </div>
+              }
+
+            </div>
+
+            <nav className=' w-full flex items-center justify-between bg-slate-100 p-4 '>
+              <img src={slLogo} alt="" />
+              <div className=' flex  items-center gap-2'>
+                <div className=' text-2xl hover:bg-slate-200 rounded-full hover:cursor-pointer p-2'>
+                  <Search />
+                </div>
+                <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>
               </div>
-              <ul className='sm:fixed sm:bottom-0 sm:left-0 sm:m-0 sm:bg-slate-300 sm:w-full flex items-center justify-center sm:gap-20 gap-40'>
 
-                <Link className={`${activeLink === '/' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/`}><House /></Link>
-                <Link className={`${activeLink === '/chat' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/chat`}><ChatDots /></Link>
-                <Link className={`${activeLink === '/profile' ? ' sm:border-t-2 sm:border-t-blue-500  lg:border-b-2 lg:border-b-blue-500' : ""}  transition-all ease-linear  hover:bg-gray-300 text-stone-800 text-3xl px-8 py-3  lg:rounded sm:hover:rounded-none`} to={`/profile`}><FilePerson /></Link>
+            </nav>
+            <nav id='sticky-navbar' className={`${isSticky ? ' fixed top-0 w-full z-50' : ''} bg-slate-50`}>
+              <ul className=' flex items-center justify-evenly mb-0' >
+
+                <Link className={`${activeLink === '/' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/`}><HouseFill /></Link>
+                <Link className={`${activeLink === '/chat' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/chat`}><ChatDotsFill /></Link>
+                <Link className={`${activeLink === '/notifications' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/notifications`}><BellFill /></Link>
+                <Link className={`${activeLink.startsWith(`/profile/`) ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/profile/${state.user._id}`}><PersonFill /></Link>
 
               </ul>
-              <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>
             </nav>
-
 
 
 
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="chat" element={<ChatUsers />} />
+              <Route path="chat/:userId" element={<ChatScreen />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route path="profile/:userId" element={<Profile />} />
+
+              <Route path='post/:postId' element={<PostDetails />} />
 
               <Route path="*" element={<Navigate to="/" replace={true} />} />
             </Routes>
@@ -205,6 +320,9 @@ const App = () => {
           <Routes>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="profile/:userId" element={<Profile />} />
+            <Route path='forget-password' element={<ForgetPassword />} />
+            <Route path='forget-password-complete' element={<ForgetPasswordComplete />} />
 
             <Route path="*" element={<Navigate to="/login" replace={true} />} />
           </Routes>
@@ -220,8 +338,14 @@ const App = () => {
       {
         state?.isLogin === null ?
           <div className='flex justify-center items-center w-full h-full absolute'>
-            <div className='animate-spin w-12 h-12 mr-3 rounded-full  border-t-4 border-blue-600 border-solid'>
-              <div className='h-6 w-6 mt-3 mx-auto rounded-full bg-white'></div>
+            <div className=' flex justify-center m-1'>
+              <div
+                className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status">
+                <span
+                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                >Loading...</span>
+              </div>
             </div>
           </div>
           :

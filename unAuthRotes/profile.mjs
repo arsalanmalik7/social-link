@@ -1,13 +1,11 @@
-
 import express from 'express';
-import { nanoid } from 'nanoid'
 import { client } from './../mongodb.mjs'
 import { ObjectId } from 'mongodb'
 import OpenAI from "openai";
 
 const db = client.db("cruddb");
 const col = db.collection("posts");
-const userCollection = db.collection("users");
+const userCollection = db.collection("usersCollection");
 
 
 let router = express.Router()
@@ -78,7 +76,7 @@ router.get('/posts', async (req, res, next) => {
     }
 
     const cursor = col.find({ authorId: new ObjectId(userId) })
-        .sort({ _id: -1 })
+        .sort({ _id: 1 })
         .limit(5);
 
     try {
@@ -91,9 +89,10 @@ router.get('/posts', async (req, res, next) => {
     }
 })
 
-router.get('/profile/:userId', async (req, res, next) => {
+router.get(`/profile/:userId`, async (req, res, next) => {
 
     const userId = req.params.userId;
+    console.log("userId: ", userId);
 
     if (!ObjectId.isValid(userId) && userId !== undefined) {
         res.status(403).send(`Invalid user id`);
@@ -102,12 +101,13 @@ router.get('/profile/:userId', async (req, res, next) => {
 
     try {
         let result = await userCollection.findOne({ _id: new ObjectId(userId) });
-        console.log("result: ", result);
+        console.log("myresult: ", result);
         res.send({
             message: 'profile fetched',
             data: {
                 firstName: result?.firstName,
                 lastName: result?.lastName,
+                profilePic: result?.profilePic,
                 email: result?.email,
             }
         });
@@ -118,9 +118,10 @@ router.get('/profile/:userId', async (req, res, next) => {
 })
 
 router.use((req, res) => {
-    res.status(401).send({ message: "invalid token" })
+    res.status(401).send({ message: "this token is invalid " })
+    console.log("this token is invalid");
     return;
 })
 
 
-export default routerF
+export default router;
