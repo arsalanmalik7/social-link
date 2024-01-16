@@ -6,7 +6,7 @@ import { GlobalContext } from "../context/context";
 import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/button';
+import { Button } from 'react-bootstrap';
 import { PersonCircle, ThreeDots, HandThumbsUp, Chat, Share, PencilSquare, Trash, HandThumbsUpFill, FileImage } from "react-bootstrap-icons";
 import moment from 'moment';
 import IconButton from '@mui/material/IconButton';
