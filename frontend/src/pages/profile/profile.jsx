@@ -8,7 +8,6 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { Tooltip } from '@mui/material';
 import { Modal, Button } from 'react-bootstrap'
-import spider from '../../assets/spider.jpg';
 
 
 
@@ -192,7 +191,7 @@ const Profile = () => {
         } catch (error) {
             console.log(error.data)
         }
-
+        e.target.reset();
 
     }
 
@@ -317,7 +316,7 @@ const Profile = () => {
                                 setSelectedImage(base64Url)
                             }} />
                             <label htmlFor='post-image' className=' bg-blue-700 p-2 rounded-lg cursor-pointer text-white font-bold hover:bg-blue-500 flex justify-center text-3xl items-center gap-1'><CardImage />Add Image</label>
-                            <button type="submit" disabled={formIsValid && postImageInput.current?.files?.length === 0}
+                            <button type="submit" disabled={formIsValid && !selectedImage}
                                 className='bg-blue-500 p-2 rounded-full text-white font-bold hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed'>Post
                             </button>
                         </div>

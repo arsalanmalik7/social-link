@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { baseUrl } from '../../core.mjs';
 import axios from 'axios';
 import Post from '../../components/posts/post';
@@ -18,6 +19,8 @@ const Home = () => {
     const [formIsValid, setFormIsValid] = useState(true);
     const [hasMoreData, setHasMoreData] = useState(true);
     const postImageInput = useRef("");
+
+    const navigate = useNavigate();
 
     const { state, dispatch } = useContext(GlobalContext);
 
@@ -130,16 +133,14 @@ const Home = () => {
 
         try {
             retriveData();
-            console.log(response.data)
-            e.target.reset();
-
-            setShowForm(!showForm)
-
-
+            console.log(response.data);
+            setShowForm(!showForm);
+            navigate(0);
         } catch (error) {
             console.log(error.data)
         }
 
+        e.target.reset();
 
     }
 
@@ -223,7 +224,7 @@ const Home = () => {
                                 setSelectedImage(base64Url)
                             }} />
                             <label htmlFor='post-image' className=' bg-blue-700 p-2 rounded-lg cursor-pointer text-white font-bold hover:bg-blue-500 flex justify-center text-3xl items-center gap-1'><CardImage />Add Image</label>
-                            <button type="submit" disabled={formIsValid && postImageInput.current?.files?.length === 0}
+                            <button type="submit" disabled={formIsValid && !selectedImage}
                                 className='bg-blue-500 p-2 rounded-full text-white font-bold hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed'>Post
                             </button>
                         </div>
@@ -232,12 +233,12 @@ const Home = () => {
             </Modal>
             {/* </div> */}
 
-            <div className=' bg-blue-100 flex justify-center'>
-                <div className=' w-2/4 sm:w-11/12 mt-3'>
+            <div className=' bg-blue-100  flex justify-center'>
+                <div className=' w-2/4 sm:w-full m-2'>
 
 
 
-                    <div className='bg-white  p-4 flex items-center gap-2 w-3/4 mt-4 m-auto rounded '>
+                    <div className='bg-white  p-4 flex items-center justify-center gap-2 w-3/4 mt-4  m-auto rounded '>
                         {state.user.profilePic ?
                             <img src={state.user.profilePic} alt="" className=' w-10 h-10 object-cover rounded-full' />
                             :

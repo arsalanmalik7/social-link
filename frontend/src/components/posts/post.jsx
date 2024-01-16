@@ -187,7 +187,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
                 <div className={`p-3 rounded bg-white overflow-hidden w-9/12 md:w-full`}>
                     <div className="flex justify-between ">
 
-                        <div className="flex  items-center gap-3 ">
+                        <div className="flex items-center gap-3 ">
                             {
                                 eachPost?.authorObject?.profilePic ?
                                     <>
@@ -268,8 +268,8 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
                                 )}
 
                                 <p className=" pt-2">{eachPost?.text}</p>
-                                <div className=" bg-slate-300  z-50 overflow-hidden">
-                                    <img src={eachPost?.img} onClick={showPostImage} alt="refresh to see updated picture" className=" w-full px-0 py-2 h-96 object-contain" />
+                                <div className="  z-50 overflow-hidden">
+                                    <img src={eachPost?.img} onClick={showPostImage} alt="refresh to see updated picture" className=" w-full px-0 py-2 h-[35rem] sm:h-full object-cover" />
                                 </div>
                             </>
                         )
@@ -278,7 +278,7 @@ const Post = ({ eachPost, onDelete, onUpdate }) => {
                             eachPost?.text?.length > 100 ?
                                 (
                                     <div>
-                                        <p className=" text-xl">{eachPost?.text}</p>
+                                        <p className=" text-xl px-2">{eachPost?.text}</p>
                                     </div>
 
 

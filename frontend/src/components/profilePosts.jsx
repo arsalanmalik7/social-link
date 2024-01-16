@@ -1,4 +1,4 @@
-import { useState, useContext, useCallback, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { baseUrl } from '../core.mjs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +7,13 @@ import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/button';
-import { PersonCircle, ThreeDots, HandThumbsUp, Chat, Share, PencilSquare, Trash, HandThumbsUpFill } from "react-bootstrap-icons";
+import { PersonCircle, ThreeDots, HandThumbsUp, Chat, Share, PencilSquare, Trash, HandThumbsUpFill, FileImage } from "react-bootstrap-icons";
 import moment from 'moment';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) => {
+const ProfilePosts = ({ posts, profile, onDelete, onUpdate }) => {
 
     const { state } = useContext(GlobalContext);
     const navigate = useNavigate();
@@ -35,7 +35,11 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
     const [showPostFullImage, setShowPostFullImage] = useState(false);
 
 
+
     const [prevText, setPrevText] = useState("");
+    const [prevImage, setPrevImage] = useState("");
+    const [isPrevImage, setIsPrevImage] = useState(false);
+    const [myLikes, setMyLikes] = useState(false);
 
     const postIdRef = useRef(null);
 
@@ -63,7 +67,7 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
         const response = await instance.delete(`/post/${postId}`, { withCredentials: true })
         try {
             setDeletePost(response.data);
-            handleDeletePost(postId);
+            onDelete(postId);
         } catch (error) {
             console.log(error.data)
         }
@@ -84,23 +88,26 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
     const updateClick = async () => {
 
         const postId = posts._id;
+        const formData = new FormData();
+        formData.append('text', prevText);
+        formData.append('img', prevImage);
+
 
         try {
-            const response = await instance.put(`/post/${postId}`, {
-
-                text: prevText,
-            }, { withCredentials: true })
+            const response = await instance.put(`/post/${postId}`, formData, { withCredentials: true })
 
             console.log(response.data);
 
             const updatedPost = {
+                ...posts,
                 _id: postId,
 
-                text: prevText
+                text: prevText,
+                img: prevImage
             }
 
 
-            handleUpdatePost(updatedPost);
+            onUpdate(updatedPost);
 
             editeHandleClose();
         } catch (error) {
@@ -147,6 +154,16 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
         }
 
     }
+
+    useEffect(() => {
+        const isLiked = posts?.likes?.some((like) => like?.userId === state?.user?._id);
+        setMyLikes((prevMyLikes) => {
+            if (isLiked !== prevMyLikes) {
+                return isLiked;
+            }
+            return prevMyLikes;
+        });
+    }, [posts, state?.user?._id]);
 
     return (
         <>
@@ -240,7 +257,7 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
 
                                     <p>{posts?.text}</p>
                                     <div className=" bg-slate-300  z-50 overflow-hidden">
-                                        <img src={posts?.img} onClick={showPostImage} alt="post" className=" w-full px-0 py-2 h-96 object-cover" />
+                                        <img src={posts?.img} onClick={showPostImage} alt="refresh to see updated picture" className=" w-full px-0 py-2 h-[35rem] sm:h-full object-cover" />
                                     </div>
 
                                 </>
@@ -268,10 +285,10 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
                         <div className=" flex justify-around border-t-2 border-gray-400 pt-2 ">
 
                             {
-                                posts?.likes?.includes(state?.user?._id) ?
+                                myLikes ?
 
                                     <div onClick={unlikeSubmitHandler} className="flex items-center py-1 px-3 gap-1 hover:bg-slate-200 rounded-sm hover:cursor-pointer flex-grow justify-center text-blue-500">
-                                        <HandThumbsUpFill /> Like {posts?.likes?.length}
+                                        <HandThumbsUpFill /> Unlike {posts?.likes?.length}
 
                                     </div>
                                     :
@@ -341,10 +358,30 @@ const ProfilePosts = ({ posts, profile, handleDeletePost, handleUpdatePost }) =>
 
                         <Form.Group
                             className="mb-3"
-                            controlId="exampleForm.ControlTextarea1"
+                        // controlId="exampleForm.ControlTextarea1"
                         >
                             <Form.Label>text of Post</Form.Label>
-                            <Form.Control as="textarea" rows={3} value={prevText} onChange={(e) => setPrevText(e.target.value)} />
+                            <Form.Control as="textarea" rows={5} value={prevText} onChange={(e) => {
+                                setPrevText(e.target.value)
+                            }}
+                            />
+
+                            <div className="mb-3">
+                                <Form.Label htmlFor="for-post" className="text-3xl border-1 rounded-lg m-3 border-black text-black flex justify-center p-3">
+                                    Select Image <FileImage />
+                                </Form.Label>
+                                {isPrevImage ? (
+                                    <img src={URL?.createObjectURL(prevImage)} alt="Selected Preview" className="w-full mt-2" />
+                                ) : (
+                                    <img src={posts?.img} alt="Previous Preview" className="w-full mt-2" />
+                                )}
+                                <Form.Control id="for-post" hidden type="file" onChange={(e) => {
+                                    setPrevImage(e.target.files[0])
+                                    setIsPrevImage(true)
+
+                                }} />
+                            </div>
+
                         </Form.Group>
                     </Form>
                 </Modal.Body>

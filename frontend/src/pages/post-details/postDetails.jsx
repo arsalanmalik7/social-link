@@ -3,7 +3,7 @@ import axios from "axios";
 import { baseUrl } from "../../core.mjs";
 import { useParams, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../context/context";
-import { HandThumbsUpFill, XLg, BoxArrowInUpRight } from 'react-bootstrap-icons'
+import { HandThumbsUpFill, XLg, BoxArrowInUpRight, ArrowLeft } from 'react-bootstrap-icons'
 import { Modal } from "react-bootstrap";
 import Post from "../../components/posts/post";
 
@@ -86,6 +86,12 @@ const PostDetails = () => {
 
     return (
         <>
+            <div onClick={()=>{
+                navigate(-1);
+
+            }} className=" bg-cyan-400 px-2 flex w-max m-2 rounded-3xl">
+                <p className=" text-2xl flex gap-1 p-1 items-center hover:font-semibold hover:cursor-pointer"><ArrowLeft /> Go back</p>
+            </div>
 
             <Modal show={show} onHide={showWhoLiked} centered>
                 <Modal.Header>
@@ -98,7 +104,7 @@ const PostDetails = () => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className=" flex flex-col gap-2">
+                    <div className=" flex flex-col gap-2 hover:cursor-pointer">
                         {
                             post?.likes?.length > 0 ?
                                 post.likes.map((like, index) => {

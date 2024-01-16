@@ -35,7 +35,23 @@ const Chat = () => {
 
         }
         getUsers();
-    }, [])
+    }, []);
+
+    const searchFriendHandler = async (e) => {
+        e.preventDefault();
+
+        const searchText = e.target[0].value;
+
+        const response = await instance.get(`/users/search/${searchText}`, {
+            withCredentials: true,
+        })
+
+        console.log(response.data);
+
+        setUsers(response.data.data);
+
+
+    }
 
 
     return (
@@ -43,19 +59,28 @@ const Chat = () => {
             <div className=" bg-blue-200 p-3">
                 <h1 className="text-center text-4xl font-bold">Chat</h1>
 
+
+                <form onSubmit={searchFriendHandler}>
+                    <div className="flex justify-center items-center gap-2">
+                        <input type="text" placeholder="Search friend..." className="w-full rounded-lg p-2" />
+                        <button type="submit" className="bg-blue-500 text-white rounded-lg p-2">Search</button>
+                    </div>
+                </form>
+
+
                 {
-                    users.length > 0 ?
+                    users?.length > 0 ?
 
                         users.map((user, index) => {
                             return (
 
                                 <div key={index} onClick={() => {
                                     navigate(
-                                        `/chat/${user._id}`,{
-                                            state:{
-                                                chatUser:user,
-                                            }
+                                        `/chat/${user?._id}`, {
+                                        state: {
+                                            chatUser: user,
                                         }
+                                    }
                                     )
                                 }} className="flex justify-between  m-3 cursor-pointer p-2" style={{
                                     background: 'rgba(255, 255, 255, 0.41)',
@@ -67,17 +92,17 @@ const Chat = () => {
                                 }}>
                                     <div className=" flex items-center gap-2  p-2 rounded " >
                                         {
-                                            user.profilePic ?
+                                            user?.profilePic ?
                                                 <>
                                                     <div className=' w-12  rounded-full'>
-                                                        <img src={user.profilePic} className='rounded-full' alt="profile-pic" />
+                                                        <img src={user?.profilePic} className='rounded-full' alt="profile-pic" />
                                                     </div>
                                                 </>
                                                 :
                                                 <p className="text-5xl m-auto text-slate-400 bg-neutral-200 w-fit rounded-full"><PersonCircle /></p>
 
                                         }
-                                        <h2 >{user.firstName} {user.lastName}{state.user._id === user._id ? '(You)' : null}</h2>
+                                        <h2 >{user?.firstName} {user?.lastName}{state?.user._id === user?._id ? '(You)' : null}</h2>
                                     </div>
                                     <p className=" text-2xl sm:hidden"><BoxArrowUpRight /></p>
                                 </div>

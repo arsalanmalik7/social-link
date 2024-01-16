@@ -28,7 +28,8 @@ const App = () => {
 
   const searchInputRef = useRef(null);
 
-  const { userId } = useParams();
+  const param = useParams();
+
   const location = useLocation();
 
   const [notifications, setNotifications] = useState([]);
@@ -193,7 +194,6 @@ const App = () => {
 
 
 
-
   return (
     <>
 
@@ -271,33 +271,44 @@ const App = () => {
 
             </div>
 
-            <nav className=' w-full flex items-center justify-between bg-slate-100 p-4 '>
-              <img src={slLogo} alt="" />
-              <div className=' flex  items-center gap-2'>
-                <div className=' text-2xl hover:bg-slate-200 rounded-full hover:cursor-pointer p-2'>
-                  <Search />
-                </div>
-                <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>
-              </div>
+            {
+              activeLink.includes(`/chat/`) || activeLink.includes(`/post/`)  ?
+                null
+                :
+                (
+                  <>
+                    <nav className=' w-full flex items-center justify-between bg-slate-100 p-4 '>
+                      <img src={slLogo} alt="" />
+                      <div className=' flex  items-center gap-2'>
+                        <div className=' text-2xl hover:bg-slate-200 rounded-full hover:cursor-pointer p-2'>
+                          <Search />
+                        </div>
+                        <button className=' bg-red-600 py-2 px-4 text-white font-bold rounded hover:bg-red-500 ' onClick={logoutHandler}> Logout</button>
+                      </div>
 
-            </nav>
-            <nav id='sticky-navbar' className={`${isSticky ? ' fixed top-0 w-full z-50' : ''} bg-slate-50`}>
-              <ul className=' flex items-center justify-evenly mb-0' >
+                    </nav>
+                    <nav id='sticky-navbar' className={`${isSticky ? ' fixed top-0 w-full z-50' : ''} bg-slate-50`}>
+                      <ul className=' flex items-center justify-evenly mb-0' >
 
-                <Link className={`${activeLink === '/' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/`}><HouseFill /></Link>
-                <Link className={`${activeLink === '/chat' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/chat`}><ChatDotsFill /></Link>
-                <Link className={`${activeLink === '/notifications' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/notifications`}><BellFill /></Link>
-                <Link className={`${activeLink.startsWith(`/profile/`) ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/profile/${state.user._id}`}><PersonFill /></Link>
+                        <Link className={`${activeLink === '/' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/`}><HouseFill /></Link>
+                        <Link className={`${activeLink === '/chat' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/chat`}><ChatDotsFill /></Link>
+                        <Link className={`${activeLink === '/notifications' ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/notifications`}><BellFill /></Link>
+                        <Link className={`${activeLink.startsWith(`/profile/`) ? " text-stone-800  border-b-blue-500" : " border-b-slate-50 text-gray-400"}  border-b-2  transition-all ease-linear  hover:bg-gray-300  sm:text-2xl text-3xl px-8 py-3 mb-2  hover:rounded`} to={`/profile/${state.user._id}`}><PersonFill /></Link>
 
-              </ul>
-            </nav>
+                      </ul>
+                    </nav>
+                  </>
+                )
+            }
 
 
 
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="chat" element={<ChatUsers />} />
+
               <Route path="chat/:userId" element={<ChatScreen />} />
+
               <Route path="notifications" element={<Notifications />} />
               <Route path="profile/:userId" element={<Profile />} />
 

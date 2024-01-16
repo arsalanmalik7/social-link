@@ -387,7 +387,7 @@ const getProfileMiddleware = async (req, res, next) => {
         res.status(500).send('server error, please try later');
     }
 
-}
+};
 
 router.get(`/profile`, getProfileMiddleware);
 router.get(`/profile/:userId`, getProfileMiddleware);
@@ -444,7 +444,7 @@ router.put('/post/:postId', upload.any(), async (req, res, next) => {
         console.error("Error finding post:", error);
         res.status(500).send("Error finding post");
     }
-})
+});
 
 
 
@@ -468,7 +468,7 @@ router.delete(`/post/:postId`, async (req, res, next) => {
         res.status(500).send('server error, please try later');
     }
 
-})
+});
 
 
 router.get(`/users`, async (req, res, next) => {
@@ -491,7 +491,29 @@ router.get(`/users`, async (req, res, next) => {
         console.log("error getting data mongodb: ", error);
         res.status(500).send('server error, please try later');
     }
-})
+});
+
+router.get(`/users/search/:searchText`, async (req, res) => {
+    const searchText = req.params.searchText;
+    try {
+
+        const regex = new RegExp(searchText, 'i');
+        const cursor = await userCollection.find({ $or: [{ firstName: regex }, { lastName: regex }] }).toArray();
+        console.log("cursor: ", cursor);
+        res.send({
+            message: "users fetched",
+            data: cursor
+        })
+    } catch (error) {
+        console.log("error getting data mongodb: ", error);
+        res.status(500).send('server error, please try later');
+
+    }
+
+
+
+
+});
 
 router.put(`/profile/:userId`, upload.any(), async (req, res, next) => {
 
