@@ -113,7 +113,7 @@ router.post('/login', async (req, res, next) => {
                 expiresCookie.setHours(expiresCookie.getHours() + 1)
                 res.cookie('token', token, {
                     httpOnly: true,
-                    // secure: true,
+                    secure: true,
                     expires: new Date(Date.now() + 86400000)
                 })
 

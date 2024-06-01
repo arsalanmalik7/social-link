@@ -10,59 +10,59 @@ const userCollection = db.collection("usersCollection");
 
 let router = express.Router()
 
-const openaiClient = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const openaiClient = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
 
 
 
-router.get('/search', async (req, res, next) => {
+// router.get('/search', async (req, res, next) => {
 
-    try {
-        const response = await openaiClient.embeddings.create({
-            model: "text-embedding-ada-002",
-            input: req.query.q,
-        });
-        const vector = response?.data[0]?.embedding
-        console.log("vector: ", vector);
+//     try {
+//         const response = await openaiClient.embeddings.create({
+//             model: "text-embedding-ada-002",
+//             input: req.query.q,
+//         });
+//         const vector = response?.data[0]?.embedding
+//         console.log("vector: ", vector);
 
 
 
-        const documents = await col.aggregate([
-            {
-                "$search": {
-                    "index": "vectorIndex",
-                    "knnBeta": {
-                        "vector": vector,
-                        "path": "embedding",
-                        "k": 10
-                    },
-                    "scoreDetails": true
+//         const documents = await col.aggregate([
+//             {
+//                 "$search": {
+//                     "index": "vectorIndex",
+//                     "knnBeta": {
+//                         "vector": vector,
+//                         "path": "embedding",
+//                         "k": 10
+//                     },
+//                     "scoreDetails": true
 
-                }
-            },
-            {
-                "$project": {
-                    "embedding": 0,
-                    "score": { "$meta": "searchScore" },
-                    "scoreDetails": { "$meta": "searchScoreDetails" }
-                }
-            }
-        ]).toArray();
+//                 }
+//             },
+//             {
+//                 "$project": {
+//                     "embedding": 0,
+//                     "score": { "$meta": "searchScore" },
+//                     "scoreDetails": { "$meta": "searchScoreDetails" }
+//                 }
+//             }
+//         ]).toArray();
 
-        documents.map(eachMatch => {
-            console.log(`score ${eachMatch?.score?.toFixed(3)} => ${JSON.stringify(eachMatch)}\n\n`);
-        })
-        console.log(`${documents.length} records found `);
+//         documents.map(eachMatch => {
+//             console.log(`score ${eachMatch?.score?.toFixed(3)} => ${JSON.stringify(eachMatch)}\n\n`);
+//         })
+//         console.log(`${documents.length} records found `);
 
-        res.send(documents);
+//         res.send(documents);
 
-    } catch (e) {
-        console.log("error getting data mongodb: ", e);
-        res.status(500).send('server error, please try later');
-    }
+//     } catch (e) {
+//         console.log("error getting data mongodb: ", e);
+//         res.status(500).send('server error, please try later');
+//     }
 
-})
+// })
 
 
 
