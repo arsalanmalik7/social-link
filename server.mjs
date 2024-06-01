@@ -28,6 +28,7 @@ app.use(cors(
         origin: [
             'http://localhost:3000',
             'http://192.168.0.109:3000',
+            'https://social-link-zeta.vercel.app',
             '*'
         ],
         credentials: true,
