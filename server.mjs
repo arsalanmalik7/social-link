@@ -91,7 +91,7 @@ const server = createServer(app);
 
 const io = new socketIo(server, {
     cors: {
-        origin: ['*', 'http://localhost:3000'],
+        origin: ['*', 'http://localhost:3000', 'https://social-link-zeta.vercel.app'],
         methods: "*",
         credentials: true,
     }
