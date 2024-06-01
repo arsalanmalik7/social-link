@@ -114,6 +114,8 @@ router.post('/login', async (req, res, next) => {
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: true,
+                    sameSite:"lax",
+                    path: '/',
                     expires: new Date(Date.now() + 86400000)
                 })
 
